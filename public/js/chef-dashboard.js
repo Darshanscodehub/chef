@@ -3,7 +3,7 @@ let incomingRequests = [];
 let myMenu = []; 
 let chefProfile = null;
 const user = JSON.parse(localStorage.getItem('user'));
-const token = localStorage.getItem('token');
+const token = localStorage.getItem('token'); // Important: Get token for requests
 let isOnline = false;
 
 // --- DOM ELEMENTS ---
@@ -16,49 +16,42 @@ const liveIndicator = document.getElementById('liveIndicator');
 
 // --- INITIAL RENDER ---
 document.addEventListener('DOMContentLoaded', () => {
-    // Check if user is logged in
     if (!token) {
         window.location.href = 'login.html';
         return;
     }
-
-    // Add Logout Listener
+    
+    // Logout Logic
     const logoutBtn = document.getElementById('logout-btn');
     if (logoutBtn) {
         logoutBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            localStorage.removeItem('userRole');
+            localStorage.clear();
             window.location.href = 'index.html';
         });
     }
 
-    // 1. First load profile
     initDashboard();
 });
 
 async function initDashboard() {
     await fetchMyProfile();
-    // 2. If profile loaded, fetch requests
     if (chefProfile) {
         fetchIncomingRequests();
-        // Set online status based on DB (assuming isOnline is part of profile schema, otherwise default false)
+        // If profile has isOnline status, use it
         if (chefProfile.isOnline) {
             isOnline = true;
             updateOnlineUI();
         }
     } else {
-        console.log("Chef profile not yet created.");
-        // Optionally redirect to onboarding if profile is missing
-        // window.location.href = 'chef-onboarding.html';
+        // If user is chef but has no profile, maybe redirect to onboarding
+        console.log("No chef profile found.");
     }
 }
 
 // --- API: GET PROFILE ---
 async function fetchMyProfile() {
     try {
-        // Fetches profile for the currently logged-in user (requires auth token)
         const res = await fetch('/api/chef/me', {
             method: 'GET',
             headers: {
@@ -81,6 +74,7 @@ async function fetchMyProfile() {
 // --- API: FETCH REQUESTS ---
 async function fetchIncomingRequests() {
     try {
+        // Correct endpoint for logged-in chef
         const res = await fetch('/api/bookings/chef', {
             method: 'GET',
             headers: {
@@ -90,11 +84,9 @@ async function fetchIncomingRequests() {
         
         if (res.ok) {
             const allBookings = await res.json();
-            // Filter only 'pending' requests for the live board
+            // Filter bookings that are pending
             incomingRequests = allBookings.filter(b => b.status === 'pending');
             renderRequests();
-        } else {
-            console.error("Failed to fetch bookings");
         }
     } catch (e) {
         console.error("Error fetching requests", e);
@@ -114,10 +106,12 @@ async function updateBookingStatus(bookingId, newStatus) {
         });
 
         if (res.ok) {
-            // Remove from local list (since it is no longer pending) and re-render
+            // Remove locally and re-render
             incomingRequests = incomingRequests.filter(b => b._id !== bookingId);
             renderRequests();
             alert(`Order ${newStatus}!`);
+            // Refresh bookings to be safe
+            fetchIncomingRequests();
         } else {
             const data = await res.json();
             alert(data.msg || "Failed to update order");
@@ -128,114 +122,102 @@ async function updateBookingStatus(bookingId, newStatus) {
     }
 }
 
-// --- API: SAVE MENU ---
-async function saveMenuToBackend() {
-    try {
-        // We use the profile update endpoint to save the entire menu array
-        // Ensure this route matches your chefController.createOrUpdateProfile logic (usually POST /api/chef)
-        const res = await fetch('/api/chef', {
-            method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json',
-                'x-auth-token': token
-            },
-            body: JSON.stringify({ 
-                menu: myMenu 
-            })
-        });
+// --- API: ADD DISH ---
+window.addDish = async function() {
+    const nameInput = document.getElementById('newDishName');
+    const priceInput = document.getElementById('newDishPrice');
+    const btn = document.querySelector('#menuModal .btn-primary');
+    
+    if (nameInput.value && priceInput.value) {
+        const originalText = btn.innerText;
+        btn.innerText = "Saving...";
 
-        if (res.ok) {
-            // Update local profile with the response to ensure synchronization
-            const updatedProfile = await res.json();
-            myMenu = updatedProfile.menu; 
-            renderSidebarMenu();
-            closeMenuModal();
-            alert("Menu saved successfully!");
-        } else {
-            const data = await res.json();
-            alert(data.msg || "Failed to save menu to server.");
+        const newDish = {
+            name: nameInput.value,
+            price: parseInt(priceInput.value),
+            description: "Delicious homemade dish" // Default description if input missing
+        };
+
+        try {
+            const res = await fetch('/api/chef/menu', {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'x-auth-token': token 
+                },
+                body: JSON.stringify(newDish)
+            });
+
+            if (res.ok) {
+                // The backend returns the updated menu array
+                const updatedMenu = await res.json();
+                myMenu = updatedMenu; 
+                renderSidebarMenu();
+                closeMenuModal();
+                nameInput.value = '';
+                priceInput.value = '';
+            } else {
+                const data = await res.json();
+                alert(data.msg || "Failed to add dish.");
+            }
+        } catch (e) {
+            console.error(e);
+            alert("Error adding dish");
         }
-    } catch (e) {
-        console.error(e);
-        alert("Server Error while saving menu");
+        
+        btn.innerText = originalText;
+    } else {
+        alert("Please fill in name and price");
     }
 }
 
-// --- MENU LOGIC ---
+window.deleteDish = async function(index) {
+    if(confirm("Delete this dish?")) {
+        // For now, we update the whole profile menu without this item
+        // A better approach in backend would be a DELETE endpoint for specific dish ID
+        myMenu.splice(index, 1);
+        
+        // Save the *entire* updated menu
+        try {
+            const res = await fetch('/api/chef', {
+                method: 'POST', // Using update profile route
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'x-auth-token': token
+                },
+                body: JSON.stringify({ menu: myMenu })
+            });
+            
+            if(res.ok) {
+                renderSidebarMenu();
+            }
+        } catch(e) {
+            console.error(e);
+        }
+    }
+}
+
+// --- MENU UI ---
 function renderSidebarMenu() {
     if (!sidebarMenuList) return;
-
-    if (myMenu.length === 0) {
-        sidebarMenuList.innerHTML = '<li style="color: #64748b; font-style: italic;">No dishes added yet.</li>';
-        return;
-    }
-
     sidebarMenuList.innerHTML = myMenu.map((item, index) => `
         <li>
-            <div style="display:flex; flex-direction:column;">
-                <span style="font-weight:600;">${item.name}</span>
-                ${item.description ? `<span style="font-size:0.8em; color:#64748b;">${item.description}</span>` : ''}
-            </div>
+            <span>${item.name}</span>
             <div style="display:flex; align-items:center; gap:10px;">
                 <span class="price-badge">₹${item.price}</span>
-                <i class="fas fa-trash" style="color:#ef4444; cursor:pointer; font-size:0.9rem;" onclick="deleteDish(${index})"></i>
+                <i class="fas fa-trash" style="color:#ef4444; cursor:pointer; font-size:0.8rem;" onclick="deleteDish(${index})"></i>
             </div>
         </li>
     `).join('');
 }
 
-window.openMenuModal = function() {
-    menuModal.classList.remove('hidden');
-}
-
-window.closeMenuModal = function() {
-    menuModal.classList.add('hidden');
-}
-
-window.addDish = async function() {
-    const nameInput = document.getElementById('newDishName');
-    const priceInput = document.getElementById('newDishPrice');
-    // Check if description input exists, otherwise default to empty
-    const descInput = document.getElementById('newDishDesc'); 
-    
-    if (nameInput.value && priceInput.value) {
-        const btn = document.querySelector('#menuModal .btn-primary');
-        const originalText = btn.innerText;
-        btn.innerText = "Saving...";
-
-        // 1. Add to local state
-        const newDish = {
-            name: nameInput.value,
-            price: parseInt(priceInput.value),
-            description: descInput ? descInput.value : ""
-        };
-        myMenu.push(newDish);
-
-        // 2. Save to Backend
-        await saveMenuToBackend();
-        
-        // 3. Reset UI
-        btn.innerText = originalText;
-        nameInput.value = '';
-        priceInput.value = '';
-        if (descInput) descInput.value = '';
-    } else {
-        alert("Please fill in at least the Name and Price fields.");
-    }
-}
-
-window.deleteDish = async function(index) {
-    if (confirm("Delete this dish?")) {
-        myMenu.splice(index, 1);
-        await saveMenuToBackend();
-    }
-}
+window.openMenuModal = function() { menuModal.classList.remove('hidden'); }
+window.closeMenuModal = function() { menuModal.classList.add('hidden'); }
 
 // --- ONLINE TOGGLE ---
 window.toggleOnline = function() {
     isOnline = !isOnline;
     updateOnlineUI();
-    // Optional: You could save this status to the backend here so it persists
 }
 
 function updateOnlineUI() {
@@ -270,9 +252,7 @@ function renderRequests() {
     }
 
     requestsContainer.innerHTML = incomingRequests.map(req => {
-        // Handle data whether user info is populated or not
-        const customerName = req.user ? req.user.name : "Customer";
-        // Convert date string to readable format
+        const customerName = req.user && req.user.name ? req.user.name : "Customer";
         const dateStr = new Date(req.date).toLocaleDateString();
 
         return `
@@ -280,21 +260,20 @@ function renderRequests() {
             <div class="req-header">
                 <div class="customer-info">
                     <h4>${customerName}</h4>
-                    <div class="req-meta"><i class="fas fa-map-marker-alt"></i> Location (See Map)</div>
+                    <div class="req-meta"><i class="fas fa-map-marker-alt"></i> View Location</div>
                     <div class="req-meta" style="margin-top:5px; font-size:0.8rem;">
                         <i class="far fa-calendar"></i> ${dateStr} | <i class="far fa-clock"></i> ${req.time}
                     </div>
                 </div>
-                <div style="background:#334155; color:#fff; padding:5px 10px; border-radius:6px; height:fit-content; font-size:0.8rem;">NEW</div>
+                <div style="background:#334155; padding:5px 10px; border-radius:6px; height:fit-content; font-size:0.8rem;">NEW</div>
             </div>
             
             <div class="req-items">
                 <strong>Guests:</strong> ${req.guests}<br>
                 <strong>Requests:</strong> ${req.specialRequests || 'None'}
             </div>
-            
-            <!-- Removed fixed total calculation since we don't have per-request dishes list yet, usually total is calculated on backend or stored in booking -->
-            
+            <!-- <div class="req-total">₹${req.totalPrice || '0'}</div> -->
+
             <div class="req-actions">
                 <button class="btn-accept" onclick="acceptRequest('${req._id}')">Accept Order</button>
                 <button class="btn-reject" onclick="rejectRequest('${req._id}')">Reject</button>
@@ -304,13 +283,13 @@ function renderRequests() {
 }
 
 window.acceptRequest = function(id) {
-    if(confirm("Are you sure you want to accept this booking?")) {
+    if(confirm("Accept this booking?")) {
         updateBookingStatus(id, 'confirmed');
     }
 }
 
 window.rejectRequest = function(id) {
-    if(confirm("Are you sure you want to reject this booking?")) {
+    if(confirm("Reject this booking?")) {
         updateBookingStatus(id, 'rejected');
     }
 }
