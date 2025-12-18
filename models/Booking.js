@@ -15,6 +15,10 @@ const bookingSchema = new mongoose.Schema({
         type: Date,
         required: true
     },
+    // Optional: time of day as string (used by frontend display)
+    time: {
+        type: String
+    },
     hours: {
         type: Number,
         required: true
@@ -32,6 +36,9 @@ const bookingSchema = new mongoose.Schema({
         default: false
     },
     dishes: [{ type: String }], // Optional: list of dish names requested
+    specialRequests: {
+        type: String
+    },
     
     // Status Flow: pending -> confirmed -> completed (or rejected)
     status: {

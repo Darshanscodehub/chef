@@ -2,6 +2,7 @@
 let myBookings = [];
 let activeTab = 'upcoming';
 const user = JSON.parse(localStorage.getItem('user'));
+const token = localStorage.getItem('token');
 
 // --- DOM ELEMENTS ---
 const container = document.getElementById('bookingsList');
@@ -21,7 +22,12 @@ document.addEventListener('DOMContentLoaded', () => {
 // --- API CALL ---
 async function fetchBookings() {
     try {
-        const res = await fetch(`/api/bookings/user/${user._id}`);
+        const res = await fetch(`/api/bookings`, {
+            method: 'GET',
+            headers: {
+                'x-auth-token': token
+            }
+        });
         if (!res.ok) throw new Error("Failed to fetch bookings");
         
         const data = await res.json();

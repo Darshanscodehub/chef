@@ -41,6 +41,8 @@ io.on('connection', (socket) => {
     });
 });
 
+// Mount chef routes under both singular and plural paths to match frontend usages
+app.use('/api/chef', require('./routes/chefRoutes'));
 app.use('/api/chefs', require('./routes/chefRoutes'));
 
 app.use('/api/admin', require('./routes/adminRoutes'));

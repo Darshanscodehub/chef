@@ -127,6 +127,7 @@ function updateCost() {
 bookingForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const user = JSON.parse(localStorage.getItem('user'));
+    const token = localStorage.getItem('token');
     
     if (!user) {
         alert("Please log in.");
@@ -147,7 +148,7 @@ bookingForm.addEventListener('submit', async (e) => {
     try {
         const res = await fetch('/api/bookings', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'x-auth-token': token },
             body: JSON.stringify({
                 userId: user._id, 
                 chefId: targetChefUserId,

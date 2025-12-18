@@ -2,22 +2,38 @@ const Booking = require('../models/Booking');
 const ChefProfile = require('../models/ChefProfile');
 
 exports.createBooking = async (req, res) => {
-  const { chefId, date, time, guests, specialRequests } = req.body;
+  // Support both authenticated requests and an explicit userId in body (fallback)
+  const {
+    chefId,
+    date,
+    time,
+    hours,
+    guests,
+    totalPrice,
+    includeIngredients,
+    dishes,
+    specialRequests,
+    userId
+  } = req.body;
 
   try {
     const booking = new Booking({
-      user: req.user.id,
+      user: req.user ? req.user.id : userId,
       chef: chefId,
       date,
       time,
+      hours,
       guests,
+      totalPrice,
+      includeIngredients,
+      dishes,
       specialRequests
     });
 
     await booking.save();
     res.json(booking);
   } catch (err) {
-    console.error(err.message);
+    console.error('Error creating booking:', err.message);
     res.status(500).send('Server Error');
   }
 };
@@ -38,17 +54,10 @@ exports.getBookings = async (req, res) => {
 // Get bookings specifically for the logged-in chef
 exports.getChefBookings = async (req, res) => {
   try {
-    // 1. Find the chef profile associated with this logged-in user
-    const chefProfile = await ChefProfile.findOne({ user: req.user.id });
-    
-    if (!chefProfile) {
-        return res.status(404).json({ msg: 'Chef profile not found for this user' });
-    }
-
-    // 2. Find bookings where the 'chef' field matches this ChefProfile ID
-    const bookings = await Booking.find({ chef: chefProfile._id })
-        .populate('user', ['name', 'email']) // Populate customer details
-        .sort({ date: 1 }); // Pending jobs usually need soonest first
+    // Bookings where the 'chef' field matches the logged-in user's ID
+    const bookings = await Booking.find({ chef: req.user.id })
+      .populate('user', ['name', 'email'])
+      .sort({ date: 1 });
 
     res.json(bookings);
   } catch (err) {
@@ -68,11 +77,8 @@ exports.updateBookingStatus = async (req, res) => {
             return res.status(404).json({ msg: 'Booking not found' });
         }
 
-        // Verify that the logged-in user is actually the chef for this booking
-        const chefProfile = await ChefProfile.findOne({ user: req.user.id });
-        
-        if (!chefProfile || booking.chef.toString() !== chefProfile._id.toString()) {
-            return res.status(401).json({ msg: 'Not authorized to manage this booking' });
+        if (booking.chef.toString() !== req.user.id) {
+          return res.status(401).json({ msg: 'Not authorized to manage this booking' });
         }
 
         booking.status = status;
