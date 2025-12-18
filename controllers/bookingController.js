@@ -1,81 +1,86 @@
 const Booking = require('../models/Booking');
-const User = require('../models/User');
+const ChefProfile = require('../models/ChefProfile');
 
-// @desc    Create new booking
-// @route   POST /api/bookings
-const createBooking = async (req, res) => {
-    try {
-        const { chefId, userId, date, hours, guests, totalPrice, includeIngredients, dishes } = req.body;
+exports.createBooking = async (req, res) => {
+  const { chefId, date, time, guests, specialRequests } = req.body;
 
-        const booking = await Booking.create({
-            chef: chefId,
-            user: userId,
-            date,
-            hours,
-            guests,
-            totalPrice,
-            includeIngredients,
-            dishes
-        });
+  try {
+    const booking = new Booking({
+      user: req.user.id,
+      chef: chefId,
+      date,
+      time,
+      guests,
+      specialRequests
+    });
 
-        res.status(201).json(booking);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
+    await booking.save();
+    res.json(booking);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
 };
 
-// @desc    Get bookings for a specific chef
-// @route   GET /api/bookings/chef/:chefId
-const getChefBookings = async (req, res) => {
-    try {
-        // Find bookings where 'chef' matches the ID
-        // Populate 'user' to get the customer's name
-        const bookings = await Booking.find({ chef: req.params.chefId })
-            .populate('user', 'name email phone')
-            .sort({ date: 1 }); // Sort by date (soonest first)
-            
-        res.json(bookings);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
+exports.getBookings = async (req, res) => {
+  try {
+    // Bookings for the CUSTOMER (filtered by user: req.user.id)
+    const bookings = await Booking.find({ user: req.user.id })
+      .populate('chef')
+      .sort({ date: -1 });
+    res.json(bookings);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
 };
 
-// @desc    Get bookings for a specific customer
-// @route   GET /api/bookings/user/:userId
-const getUserBookings = async (req, res) => {
-    try {
-        const bookings = await Booking.find({ user: req.params.userId })
-            .populate('chef', 'name')
-            .sort({ date: -1 }); // Newest created first
-            
-        res.json(bookings);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
+// Get bookings specifically for the logged-in chef
+exports.getChefBookings = async (req, res) => {
+  try {
+    // 1. Find the chef profile associated with this logged-in user
+    const chefProfile = await ChefProfile.findOne({ user: req.user.id });
+    
+    if (!chefProfile) {
+        return res.status(404).json({ msg: 'Chef profile not found for this user' });
     }
+
+    // 2. Find bookings where the 'chef' field matches this ChefProfile ID
+    const bookings = await Booking.find({ chef: chefProfile._id })
+        .populate('user', ['name', 'email']) // Populate customer details
+        .sort({ date: 1 }); // Pending jobs usually need soonest first
+
+    res.json(bookings);
+  } catch (err) {
+    console.error("Error in getChefBookings:", err.message);
+    res.status(500).send('Server Error');
+  }
 };
 
-// @desc    Update booking status (Accept/Reject)
-// @route   PUT /api/bookings/:id
-const updateBookingStatus = async (req, res) => {
-    try {
-        const { status } = req.body; // 'confirmed' or 'rejected'
-        const booking = await Booking.findById(req.params.id);
+// Update Booking Status (Accept/Reject)
+exports.updateBookingStatus = async (req, res) => {
+    const { status } = req.body; // Expecting 'confirmed' or 'rejected'
 
-        if (booking) {
-            booking.status = status;
-            const updatedBooking = await booking.save();
-            res.json(updatedBooking);
-        } else {
-            res.status(404).json({ message: 'Booking not found' });
+    try {
+        let booking = await Booking.findById(req.params.id);
+
+        if (!booking) {
+            return res.status(404).json({ msg: 'Booking not found' });
         }
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
 
-module.exports = {
-    createBooking,
-    getChefBookings,
-    getUserBookings,
-    updateBookingStatus
+        // Verify that the logged-in user is actually the chef for this booking
+        const chefProfile = await ChefProfile.findOne({ user: req.user.id });
+        
+        if (!chefProfile || booking.chef.toString() !== chefProfile._id.toString()) {
+            return res.status(401).json({ msg: 'Not authorized to manage this booking' });
+        }
+
+        booking.status = status;
+        await booking.save();
+
+        res.json(booking);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
 };
