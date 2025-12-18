@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up | Cloud Chef</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/auth.css">
+</head>
+<body>
+
+    <nav class="auth-nav">
+        <div class="logo">
+            <a href="index.html" style="text-decoration: none; color: inherit;">
+                <i class="fas fa-fire-alt"></i> Cloud<span>Chef</span>
+            </a>
+        </div>
+    </nav>
+
+    <div class="auth-container">
+        <div class="glow-circle circle-1"></div>
+        <div class="glow-circle circle-2"></div>
+
+        <div class="auth-card glass-effect">
+            <div class="auth-header">
+                <h2>Join the Kitchen</h2>
+                <p>Select your role to get started.</p>
+            </div>
+
+            <form id="signupForm">
+                
+                <!-- Role Selector -->
+                <div class="role-selector">
+                    <div class="role-option active" onclick="selectRole(this, 'customer')">
+                        <i class="fas fa-utensils"></i>
+                        <span>I want Food</span>
+                    </div>
+                    <div class="role-option" onclick="selectRole(this, 'chef')">
+                        <i class="fas fa-hat-chef"></i>
+                        <span>I am a Chef</span>
+                    </div>
+                    <input type="hidden" id="roleInput" value="customer">
+                </div>
+
+                <div class="input-group">
+                    <i class="fas fa-user"></i>
+                    <input type="text" placeholder="Full Name" required>
+                </div>
+
+                <div class="input-group">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" placeholder="Email Address" required>
+                </div>
+                
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" placeholder="Password" required>
+                </div>
+
+                <button type="submit" class="btn-glow full-width">Create Account</button>
+            </form>
+
+            <div class="auth-footer">
+                <p>Already have an account? <a href="login.html">Log In</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- UI Logic Only (Visual Toggles) -->
+    <script>
+        function selectRole(element, role) {
+            // Remove active class from all options
+            document.querySelectorAll('.role-option').forEach(opt => opt.classList.remove('active'));
+            // Add active class to clicked option
+            element.classList.add('active');
+            // Update hidden input
+            document.getElementById('roleInput').value = role;
+        }
+    </script>
+
+    <!-- Backend Logic (The Real Work) -->
+    <!-- This file handles the fetch() call to MongoDB -->
+    <script src="js/auth.js"></script>
+
+</body>
+</html>

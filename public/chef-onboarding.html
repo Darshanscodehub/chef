@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chef Onboarding | Cloud Chef</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/chef-onboarding.css">
+</head>
+<body>
+
+    <nav class="app-navbar">
+        <div class="container nav-content">
+            <div class="logo">
+                <i class="fas fa-fire-alt"></i> Cloud<span>Chef</span>
+            </div>
+            <div class="user-profile">
+                <span class="text-muted">Step <span id="stepCount">1</span> of 3</span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container onboarding-container">
+        
+        <!-- Progress Bar -->
+        <div class="progress-track">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="form-card glass-card">
+            
+            <!-- STEP 1: DOCUMENTS -->
+            <div class="form-step active" id="step1">
+                <div class="step-header">
+                    <h2>Verify Your Identity</h2>
+                    <p>To ensure safety, we need a government-issued FSSAI ID.</p>
+                </div>
+
+                <div class="upload-zone" id="dropZone">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <h3>Drag & Drop your ID here</h3>
+                    <p>or <span class="highlight">Browse Files</span></p>
+                    <input type="file" id="fileInput" hidden>
+                </div>
+                
+                <div id="filePreview" class="file-preview hidden">
+                    <i class="fas fa-file-image"></i>
+                    <span id="fileName">aadhar_card.jpg</span>
+                    <i class="fas fa-check-circle text-green"></i>
+                </div>
+
+                <button class="btn-glow full-width" onclick="nextStep(2)">Continue</button>
+            </div>
+
+            <!-- STEP 2: PRICING & BIO -->
+            <div class="form-step hidden" id="step2">
+                <div class="step-header">
+                    <h2>Profile Details</h2>
+                    <p>Set your rates and tell customers about yourself.</p>
+                </div>
+
+                <div class="input-group">
+                    <label>Hourly Rate (₹)</label>
+                    <input type="number" placeholder="e.g. 500" class="dark-input">
+                </div>
+
+                <div class="input-group">
+                    <label>Years of Experience</label>
+                    <input type="number" placeholder="e.g. 5" class="dark-input">
+                </div>
+
+                <div class="input-group">
+                    <label>Short Bio</label>
+                    <textarea placeholder="I specialize in..." rows="4" class="dark-input"></textarea>
+                </div>
+
+                <div class="btn-row">
+                    <button class="btn-secondary" onclick="nextStep(1)">Back</button>
+                    <button class="btn-glow" onclick="nextStep(3)">Continue</button>
+                </div>
+            </div>
+
+            <!-- STEP 3: MENU SETUP -->
+            <div class="form-step hidden" id="step3">
+                <div class="step-header">
+                    <h2>Add Signature Dishes</h2>
+                    <p>Add at least 3 dishes to your menu.</p>
+                </div>
+
+                <div class="dish-inputs">
+                    <div class="input-group">
+                        <input type="text" placeholder="Dish Name (e.g. Butter Chicken)" class="dark-input">
+                    </div>
+                    <div class="input-group">
+                        <input type="number" placeholder="Price (₹)" class="dark-input">
+                    </div>
+                    <button class="btn-icon-add"><i class="fas fa-plus"></i></button>
+                </div>
+
+                <div class="added-dishes">
+                    <div class="dish-tag">Paneer Tikka <i class="fas fa-times"></i></div>
+                    <div class="dish-tag">Dal Makhani <i class="fas fa-times"></i></div>
+                </div>
+
+                <div class="btn-row">
+                    <button class="btn-secondary" onclick="nextStep(2)">Back</button>
+                    <button class="btn-glow" onclick="finishOnboarding()">Submit Application</button>
+                </div>
+            </div>
+
+            <!-- SUCCESS STATE -->
+            <div class="form-step hidden" id="successStep">
+                <div class="success-content">
+                    <div class="check-anim">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <h2>Application Received!</h2>
+                    <p>Our team will verify your documents within 24 hours. You can access your dashboard once approved.</p>
+                    <a href="chef-dashboard.html" class="btn-primary">Go to Dashboard</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="js/chef-onboarding.js"></script>
+</body>
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find a Chef | Cloud Chef</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+
+    <!-- App Navbar -->
+    <nav class="app-navbar">
+        <div class="container nav-content">
+            <div class="logo">
+                <a href="index.html" style="text-decoration: none; color: inherit;">
+                    <i class="fas fa-fire-alt"></i> Cloud<span>Chef</span>
+                </a>
+            </div>
+            <div class="nav-links" style="display:flex; gap:20px; margin-right:auto; margin-left:40px;">
+                <a href="#" style="color:var(--brand-orange); font-weight:600; text-decoration:none;">Find Chefs</a>
+                <a href="bookings.html" style="color:var(--text-muted); text-decoration:none;">My Bookings</a>
+            </div>
+            <div class="user-profile">
+                <span class="user-name">Welcome, <strong>Rahul</strong></span>
+                <div class="avatar">R</div>
+                <button class="btn-logout"><i class="fas fa-sign-out-alt"></i></button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Filters Section -->
+    <section class="filter-section">
+        <div class="container">
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Search for 'Italian' or 'Chef Marco'...">
+            </div>
+            
+            <div class="filter-tags">
+                <button class="filter-tag active" data-filter="all">All Cuisines</button>
+                <button class="filter-tag" data-filter="North Indian">North Indian</button>
+                <button class="filter-tag" data-filter="Italian">Italian</button>
+                <button class="filter-tag" data-filter="Asian">Asian</button>
+                <button class="filter-tag" data-filter="Continental">Continental</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content: Chef Grid -->
+    <main class="container">
+        <div class="dashboard-header">
+            <h2>Top Rated Chefs near you</h2>
+            <p class="text-muted">Found <span id="chef-count">0</span> chefs ready to cook.</p>
+        </div>
+
+        <div class="chefs-grid" id="chefsGrid">
+            <!-- JS will inject Chef Cards here -->
+        </div>
+    </main>
+
+    <!-- Booking Modal (Hidden by default) -->
+    <div id="bookingModal" class="modal-overlay hidden">
+        <div class="modal-card glass-card">
+            <button class="close-modal" onclick="closeModal()">&times;</button>
+            
+            <div class="modal-header">
+                <h2 id="modalChefName">Chef Name</h2>
+                <p class="text-muted" id="modalChefSpecialty">Specialty</p>
+            </div>
+
+            <form id="bookingForm">
+                <div class="form-row">
+                    <div class="input-group">
+                        <label>Date</label>
+                        <input type="date" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Time</label>
+                        <select required>
+                            <option>Lunch (12:00 PM)</option>
+                            <option>Dinner (7:00 PM)</option>
+                            <option>Party (All Day)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Guests: <span id="guestDisplay">4</span></label>
+                    <input type="range" id="guestRange" min="2" max="20" value="4" oninput="updatePrice()">
+                </div>
+
+                <!-- The Hybrid Ingredient Toggle -->
+                <div class="ingredient-box">
+                    <div class="toggle-row">
+                        <div class="toggle-text">
+                            <h4>Chef brings ingredients?</h4>
+                            <p>If OFF, you provide groceries. If ON, Chef brings them.</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="ingredientToggle" onchange="updatePrice()">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="price-breakdown">
+                    <div class="price-row">
+                        <span>Chef Fee (4 hrs)</span>
+                        <span id="feeDisplay">₹2000</span>
+                    </div>
+                    <div class="price-row" id="ingredientRow" style="display:none; color: var(--brand-gold);">
+                        <span>Ingredients Est.</span>
+                        <span id="ingredientDisplay">₹0</span>
+                    </div>
+                    <div class="total-row">
+                        <span>Total Estimate</span>
+                        <span class="total-amount" id="totalDisplay">₹2000</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-glow full-width">Confirm Request</button>
+            </form>
+        </div>
+    </div>
+    <script>
+        // In public/dashboard.html
+
+function goToProfile(id) {
+    // 1. Save the ID so the next page knows which chef to load
+    // Note: In a real app, you would pass the specific MongoDB _id here.
+    // For testing, if you have a real Chef ID from your database, use that.
+    // If using the mock data above, we'll just save it.
+    localStorage.setItem('selectedChefId', id); 
+    
+    // 2. Redirect
+    window.location.href = 'chef-profile.html';
+}
+    </script>
+
+    <script src="js/dashboard.js"></script>
+</body>
+</html>

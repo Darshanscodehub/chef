@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Cloud Chef</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/auth.css">
+</head>
+<body>
+
+    <!-- Simple Navbar for navigation back home -->
+    <nav class="auth-nav">
+        <div class="logo">
+            <a href="index.html" style="text-decoration: none; color: inherit;">
+                <i class="fas fa-fire-alt"></i> Cloud<span>Chef</span>
+            </a>
+        </div>
+    </nav>
+
+    <div class="auth-container">
+        <!-- Decorative Elements -->
+        <div class="glow-circle circle-1"></div>
+        <div class="glow-circle circle-2"></div>
+
+        <div class="auth-card glass-effect">
+            <div class="auth-header">
+                <h2>Welcome Back</h2>
+                <p>Hungry? Let's get you signed in.</p>
+            </div>
+
+            <form id="loginForm">
+                <div class="input-group">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" placeholder="Email Address" required>
+                </div>
+                
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" placeholder="Password" required>
+                </div>
+
+                <div class="form-actions">
+                    <label class="checkbox-container">
+                        <input type="checkbox"> Remember me
+                    </label>
+                    <a href="#" class="forgot-link">Forgot Password?</a>
+                </div>
+
+                <button type="submit" class="btn-glow full-width">Log In</button>
+            </form>
+
+            <div class="auth-footer">
+                <p>New to Cloud Chef? <a href="signup.html">Create Account</a></p>
+            </div>
+        </div>
+    </div>
+
+<script src="js/auth.js"></script>
+</body>
+</html>

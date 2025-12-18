@@ -1,0 +1,184 @@
+/* Center the content vertically and horizontally */
+.auth-container {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    padding: 20px;
+}
+
+/* Navbar specific for auth pages */
+.auth-nav {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 20px 40px;
+    z-index: 10;
+}
+
+/* The Glowing Background Blobs */
+.glow-circle {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    z-index: -1;
+    opacity: 0.4;
+}
+
+.circle-1 {
+    width: 400px;
+    height: 400px;
+    background: var(--brand-orange);
+    top: -50px;
+    left: -50px;
+}
+
+.circle-2 {
+    width: 300px;
+    height: 300px;
+    background: var(--brand-gold);
+    bottom: -50px;
+    right: -50px;
+}
+
+/* The Card */
+.auth-card {
+    width: 100%;
+    max-width: 450px;
+    background: rgba(20, 20, 20, 0.6);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    padding: 40px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.auth-header h2 {
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    color: var(--text-main);
+    margin-bottom: 10px;
+}
+
+/* Form Elements */
+.input-group {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.input-group i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    transition: 0.3s;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 15px 15px 15px 45px; /* Left padding accounts for icon */
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    color: var(--text-main);
+    font-size: 1rem;
+    outline: none;
+    transition: 0.3s;
+}
+
+.input-group input:focus {
+    border-color: var(--brand-orange);
+    box-shadow: 0 0 0 2px rgba(255, 81, 47, 0.2);
+}
+
+.input-group input:focus + i {
+    color: var(--brand-orange);
+}
+
+/* Role Selector (Signup Only) */
+.role-selector {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.role-option {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 15px;
+    border-radius: 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: 0.3s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.role-option i {
+    font-size: 1.5rem;
+    color: var(--text-muted);
+}
+
+.role-option span {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+/* Active State for Role */
+.role-option.active {
+    background: rgba(255, 81, 47, 0.15);
+    border-color: var(--brand-orange);
+}
+
+.role-option.active i, 
+.role-option.active span {
+    color: var(--brand-orange);
+}
+
+/* Footer & Links */
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.forgot-link {
+    color: var(--brand-gold);
+    text-decoration: none;
+}
+
+.full-width {
+    width: 100%;
+    padding: 15px;
+    font-size: 1.1rem;
+}
+
+.auth-footer {
+    text-align: center;
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-muted);
+}
+
+.auth-footer a {
+    color: var(--brand-orange);
+    text-decoration: none;
+    font-weight: 600;
+}

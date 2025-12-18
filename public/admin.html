@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Control | Cloud Chef</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+    <div class="admin-layout">
+        
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fas fa-fire-alt"></i> Cloud<span>Chef</span>
+                <div class="admin-badge">ADMIN</div>
+            </div>
+
+            <nav class="side-nav">
+                <a href="#" class="nav-item active"><i class="fas fa-chart-line"></i> Overview</a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-user-shield"></i> Verifications
+                    <span class="badge-count">3</span>
+                </a>
+                <a href="#" class="nav-item"><i class="fas fa-users"></i> User Base</a>
+                <a href="#" class="nav-item"><i class="fas fa-wallet"></i> Payouts</a>
+                <a href="#" class="nav-item"><i class="fas fa-cog"></i> Settings</a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="btn-logout"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            
+            <header class="top-bar">
+                <h2>Dashboard Overview</h2>
+                <div class="date-display" id="currentDate">Oct 24, 2025</div>
+            </header>
+
+            <!-- Stats Row -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon orange"><i class="fas fa-coins"></i></div>
+                    <div class="stat-info">
+                        <h3>₹45,200</h3>
+                        <p>Total Revenue</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
+                    <div class="stat-info">
+                        <h3>128</h3>
+                        <p>Active Bookings</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon blue"><i class="fas fa-hat-chef"></i></div>
+                    <div class="stat-info">
+                        <h3>52</h3>
+                        <p>Verified Chefs</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Verification Queue -->
+            <section class="table-section">
+                <div class="section-header">
+                    <h3>Pending Chef Verifications</h3>
+                    <button class="btn-text">View All</button>
+                </div>
+                
+                <div class="custom-table">
+                    <div class="table-header">
+                        <div>Chef Name</div>
+                        <div>Applied Date</div>
+                        <div>Documents</div>
+                        <div>Status</div>
+                        <div>Action</div>
+                    </div>
+                    <div id="verificationList">
+                        <!-- JS injects rows here -->
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+    </div>
+
+    <!-- DOCUMENT MODAL -->
+    <div id="docModal" class="modal-overlay hidden">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Verify Chef Application</h3>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="applicant-info">
+                    <img src="" id="modalAvatar" alt="Chef">
+                    <div>
+                        <h4 id="modalName">Chef Name</h4>
+                        <p>Applied 2 days ago</p>
+                    </div>
+                </div>
+
+                <div class="doc-preview">
+                    <h5>Submitted ID Proof (Aadhar/PAN)</h5>
+                    <div class="doc-img-box">
+                        <img src="https://i.imgur.com/M7t1j0s.png" alt="ID Proof Placeholder"> <!-- Placeholder ID image -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-reject" onclick="rejectChef()">Reject Application</button>
+                <button class="btn-approve" onclick="approveChef()">Approve & Activate</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/admin.js"></script>
+</body>
+</html>

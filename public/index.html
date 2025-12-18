@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloud Chef | Private Dining Redefined</title>
+    
+    <!-- Google Fonts: 'Outfit' for headings, 'Inter' for body -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/landing.css">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container nav-content">
+            <div class="logo">
+                <i class="fas fa-fire-alt"></i> Chef@<span>Home</span>
+            </div>
+            <div class="nav-links">
+                <a href="#about" class="nav-link">Our Story</a>
+                <a href="#contact" class="nav-link">Contact</a>
+                <a href="login.html" class="nav-link">Log In</a>
+                <a href="signup.html" class="btn-glow">Get Started</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero-section">
+        <div class="blob"></div>
+        <div class="container hero-content">
+            <h1 class="fade-in-up">Dining, <br> <span class="gradient-text">Elevated.</span></h1>
+            <p class="fade-in-up delay-1">Experience 5-star cuisine in the comfort of your own home. Verified chefs, fresh ingredients, unforgettable memories.</p>
+            <div class="hero-buttons fade-in-up delay-2">
+                <button class="btn-primary">Find a Chef <i class="fas fa-arrow-right"></i></button>
+                <button class="btn-secondary">How it Works</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- How It Works -->
+    <section class="steps-section">
+        <div class="container">
+            <h2 class="section-title">Three Steps to <span class="gradient-text">Perfection</span></h2>
+            <div class="grid-3">
+                <div class="glass-card">
+                    <div class="icon-box"><i class="fas fa-search"></i></div>
+                    <h3>Choose Your Chef</h3>
+                    <p>Browse portfolios of top-rated local chefs. Filter by cuisine, price, and availability.</p>
+                </div>
+                <div class="glass-card">
+                    <div class="icon-box"><i class="fas fa-carrot"></i></div>
+                    <h3>We Handle Groceries</h3>
+                    <p>Select our "Chef-Sourced" option. Your chef arrives with fresh, premium ingredients.</p>
+                </div>
+                <div class="glass-card">
+                    <div class="icon-box"><i class="fas fa-wine-glass-alt"></i></div>
+                    <h3>Dine & Relax</h3>
+                    <p>Watch them cook, enjoy the meal, and relax while they handle the cleanup.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW SECTION: ABOUT US -->
+    <section id="about" class="about-section">
+        <div class="container about-grid">
+            <div class="about-content">
+                <h2 class="section-title" style="text-align: left;">More Than Just <br><span class="gradient-text">Food.</span></h2>
+                <p>We started Cloud Chef because we were tired of the "Restaurant Anxiety"—noisy crowds, questionable hygiene, and rushed service.</p>
+                <br>
+                <p>We believe food is intimate. It brings families together. By connecting you with passionate local chefs, we aren't just delivering a meal; we are delivering an experience, a story, and a memory created right in your kitchen.</p>
+                <div class="stats-row">
+                    <div class="stat">
+                        <h3>500+</h3>
+                        <p>Verified Chefs</p>
+                    </div>
+                    <div class="stat">
+                        <h3>10k+</h3>
+                        <p>Meals Served</p>
+                    </div>
+                </div>
+            </div>
+            <div class="about-image">
+                <!-- Placeholder for a chef image -->
+                <img src="../images/hero-bg.jpg" alt="" srcset="">
+
+                <div class="image-card">
+                    <i class="fas fa-quote-left quote-icon"></i>
+                    <p>"Cooking for a family in their home is the purest form of hospitality."</p>
+                    <span>- Chef Marco, Top Rated</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW SECTION: TESTIMONIALS -->
+    <section class="reviews-section">
+        <div class="container">
+            <h2 class="section-title">Stories from <span class="gradient-text">The Table</span></h2>
+            <div class="grid-3">
+                <div class="glass-card review-card">
+                    <div class="stars">★★★★★</div>
+                    <p>"I hosted a dinner for 8 people. Chef Anjali handled everything. The kitchen was cleaner than when she arrived!"</p>
+                    <div class="reviewer">
+                        <div class="avatar"></div>
+                        <span>Sarah J.</span>
+                    </div>
+                </div>
+                <div class="glass-card review-card">
+                    <div class="stars">★★★★★</div>
+                    <p>"Better than any restaurant in Pune. The personalized menu made our anniversary unforgettable."</p>
+                    <div class="reviewer">
+                        <div class="avatar"></div>
+                        <span>Rahul M.</span>
+                    </div>
+                </div>
+                <div class="glass-card review-card">
+                    <div class="stars">★★★★★</div>
+                    <p>"Finally, I can enjoy healthy, complex meals without spending 3 hours cooking after work."</p>
+                    <div class="reviewer">
+                        <div class="avatar"></div>
+                        <span>Priya D.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW SECTION: CONTACT FORM -->
+    <section id="contact" class="contact-section">
+        <div class="container contact-container">
+            <div class="form-box glass-card">
+                <h2>Have Questions?</h2>
+                <p style="color: var(--text-muted); margin-bottom: 20px;">Whether you're a host or a chef, we're here to help.</p>
+                
+                <form>
+                    <div class="input-group">
+                        <input type="text" placeholder="Your Name" required>
+                        <input type="email" placeholder="Email Address" required>
+                    </div>
+                    <textarea placeholder="Your Message..." rows="5" required></textarea>
+                    <button type="submit" class="btn-glow" style="width: 100%;">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-content">
+            <div class="footer-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Chef Guidelines</a>
+            </div>
+            <p>&copy; 2025 Cloud Chef Inc. Redefining home dining.</p>
+            <div class="socials">
+                <i class="fab fa-instagram"></i>
+                <i class="fab fa-twitter"></i>
+                <i class="fab fa-linkedin"></i>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

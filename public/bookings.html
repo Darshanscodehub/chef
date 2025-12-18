@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Bookings | Cloud Chef</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/bookings.css">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="app-navbar">
+        <div class="container nav-content">
+            <div class="logo">
+                <a href="dashboard.html" style="text-decoration: none; color: inherit;">
+                    <i class="fas fa-fire-alt"></i> Cloud<span>Chef</span>
+                </a>
+            </div>
+            <div class="nav-links-desktop">
+                <a href="dashboard.html">Find Chefs</a>
+                <a href="#" class="active">My Bookings</a>
+            </div>
+            <div class="user-profile">
+                <div class="avatar">R</div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container main-content">
+        <header class="page-header">
+            <h1>My Kitchen Schedule</h1>
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('upcoming')">Upcoming</button>
+                <button class="tab-btn" onclick="switchTab('history')">History</button>
+            </div>
+        </header>
+
+        <!-- Bookings List -->
+        <div id="bookingsList" class="bookings-container">
+            <!-- JS will populate this -->
+        </div>
+    </div>
+
+    <!-- CHAT DRAWER (Hidden by default) -->
+    <div id="chatDrawer" class="chat-drawer">
+        <div class="chat-header">
+            <div class="chat-user-info">
+                <div class="chat-avatar" id="chatAvatar">C</div>
+                <div>
+                    <h4 id="chatChefName">Chef Name</h4>
+                    <span class="status-dot online"></span> <small>Online</small>
+                </div>
+            </div>
+            <button class="close-chat" onclick="closeChat()"><i class="fas fa-times"></i></button>
+        </div>
+        
+        <div class="chat-messages" id="chatMessages">
+            <!-- Messages go here -->
+        </div>
+
+        <form class="chat-input-area" onsubmit="sendMessage(event)">
+            <input type="text" id="msgInput" placeholder="Ask about ingredients..." autocomplete="off">
+            <button type="submit"><i class="fas fa-paper-plane"></i></button>
+        </form>
+    </div>
+
+    <!-- Overlay for Chat -->
+    <div id="chatOverlay" class="chat-overlay hidden" onclick="closeChat()"></div>
+
+    <script src="js/bookings.js"></script>
+</body>
+</html>

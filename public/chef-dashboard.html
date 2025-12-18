@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chef Console | Cloud Chef</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --brand-orange: #ff6b35;
+            --brand-dark: #1a1a2e;
+            --brand-gold: #fbbf24;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        
+        body {
+            background-color: #0f172a;
+            color: var(--text-main);
+            min-height: 100vh;
+        }
+
+        /* Navbar */
+        .app-navbar {
+            background: rgba(15, 23, 42, 0.95);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+        
+        .container { max-width: 1200px; margin: 0 auto; px-4; }
+        .nav-content { display: flex; justify-content: space-between; align-items: center; padding: 0 20px; }
+        
+        .logo { font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 700; color: white; }
+        .logo span { color: var(--brand-orange); }
+        .partner-badge { background: var(--brand-orange); color: white; font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; vertical-align: middle; margin-left: 8px; }
+
+        .nav-controls { display: flex; align-items: center; gap: 20px; }
+
+        /* Power Toggle */
+        .status-wrapper { cursor: pointer; }
+        .status-pill {
+            display: flex; align-items: center; gap: 8px;
+            padding: 6px 12px; border-radius: 20px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid var(--border-color);
+            transition: 0.3s;
+        }
+        .status-indicator { width: 8px; height: 8px; border-radius: 50%; background: #64748b; }
+        
+        .status-pill.online { background: rgba(34, 197, 94, 0.2); border-color: #22c55e; }
+        .status-pill.online .status-indicator { background: #22c55e; box-shadow: 0 0 8px #22c55e; }
+        .status-pill.online span { color: #22c55e; font-weight: 600; }
+
+        .status-pill.offline span { color: var(--text-muted); }
+
+        .user-profile { display: flex; align-items: center; gap: 10px; }
+        .avatar { width: 35px; height: 35px; background: var(--brand-orange); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        .btn-logout { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.1rem; }
+
+        /* Layout */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 25px;
+            padding: 25px 20px;
+        }
+
+        /* Sidebar */
+        .glass-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .stat-header h3 { font-size: 1.8rem; font-family: 'Outfit', sans-serif; }
+        .trend.up { color: #22c55e; font-size: 0.85rem; margin-top: 10px; }
+        
+        .chart-container { height: 60px; display: flex; align-items: flex-end; gap: 6px; margin: 15px 0; }
+        .chart-bar { flex: 1; background: rgba(255,255,255,0.1); border-radius: 4px; }
+        .chart-bar.active { background: var(--brand-orange); }
+
+        /* Menu Section */
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .btn-icon-small {
+            background: var(--brand-orange);
+            border: none;
+            color: white;
+            width: 28px; height: 28px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+        }
+        
+        .dish-list { list-style: none; }
+        .dish-list li { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border-color); font-size: 0.95rem; }
+        .price-badge { color: var(--brand-gold); font-weight: 600; }
+
+        /* Main Content */
+        .section-title { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .live-indicator { background: #ef4444; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; animation: pulse 2s infinite; }
+        
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
+
+        /* Request Cards */
+        .request-card {
+            background: #1e293b;
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--brand-orange);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            animation: slideIn 0.3s ease;
+        }
+
+        .req-header { display: flex; justify-content: space-between; margin-bottom: 12px; }
+        .customer-info h4 { font-size: 1.1rem; color: white; margin-bottom: 4px; }
+        .req-meta { display: flex; gap: 15px; color: var(--text-muted); font-size: 0.85rem; }
+        
+        .req-items { background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; margin: 15px 0; font-size: 0.9rem; }
+        .req-total { text-align: right; font-weight: bold; color: var(--brand-gold); font-size: 1.1rem; margin-top: 10px; }
+
+        .req-actions { display: flex; gap: 10px; margin-top: 15px; }
+        .btn-accept { flex: 1; padding: 10px; border: none; background: #22c55e; color: white; border-radius: 8px; cursor: pointer; font-weight: 600; }
+        .btn-reject { flex: 1; padding: 10px; border: 1px solid #ef4444; background: transparent; color: #ef4444; border-radius: 8px; cursor: pointer; font-weight: 600; }
+
+        .empty-state-box {
+            text-align: center;
+            padding: 40px;
+            background: var(--glass-bg);
+            border-radius: 12px;
+            border: 2px dashed var(--border-color);
+            color: var(--text-muted);
+        }
+        .empty-icon { font-size: 2rem; margin-bottom: 15px; opacity: 0.5; }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .modal-content {
+            background: #1e293b;
+            padding: 30px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 400px;
+            border: 1px solid var(--border-color);
+        }
+        .modal-header { display: flex; justify-content: space-between; margin-bottom: 20px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 8px; font-size: 0.9rem; color: var(--text-muted); }
+        .form-input {
+            width: 100%; padding: 10px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: white;
+        }
+        .btn-primary {
+            width: 100%; padding: 12px;
+            background: var(--brand-orange);
+            border: none; color: white;
+            border-radius: 8px;
+            font-weight: 600; cursor: pointer;
+        }
+        .hidden { display: none !important; }
+        
+        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-layout { grid-template-columns: 1fr; }
+            .sidebar { display: none; } /* Simplified for mobile */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="app-navbar">
+        <div class="container nav-content">
+            <div class="logo">
+                <i class="fas fa-fire-alt"></i> Cloud<span>Chef</span> <span class="partner-badge">PARTNER</span>
+            </div>
+            
+            <div class="nav-controls">
+                <div class="status-wrapper" onclick="toggleOnline()">
+                    <div class="status-pill offline" id="statusPill">
+                        <div class="status-indicator"></div>
+                        <span id="statusText">Go Online</span>
+                    </div>
+                </div>
+                <div class="user-profile">
+                    <div class="avatar">C</div>
+                    <span class="user-name hidden-mobile">Chef <strong>Rahul</strong></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container main-layout">
+        
+        <!-- LEFT COLUMN -->
+        <aside class="sidebar">
+            <div class="stat-card glass-card">
+                <div class="stat-header">
+                    <h3>₹12,500</h3>
+                    <span style="color:var(--text-muted); font-size:0.9rem;">This Week</span>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-bar" style="height: 40%"></div>
+                    <div class="chart-bar" style="height: 65%"></div>
+                    <div class="chart-bar" style="height: 50%"></div>
+                    <div class="chart-bar active" style="height: 90%"></div>
+                    <div class="chart-bar" style="height: 30%"></div>
+                </div>
+                <div class="trend up"><i class="fas fa-arrow-up"></i> 12% vs last week</div>
+            </div>
+
+            <div class="menu-section glass-card">
+                <div class="section-header">
+                    <h4>Signature Dishes</h4>
+                    <!-- FIXED: Added onclick handler -->
+                    <button class="btn-icon-small" onclick="openMenuModal()"><i class="fas fa-plus"></i></button>
+                </div>
+                <!-- FIXED: Added ID for JS -->
+                <ul class="dish-list" id="sidebarMenuList">
+                    <!-- Populated by JS -->
+                </ul>
+            </div>
+        </aside>
+
+        <!-- RIGHT COLUMN -->
+        <main class="content-area">
+            
+            <section class="dashboard-section">
+                <div class="section-title">
+                    <h2><i class="fas fa-satellite-dish" style="color: var(--brand-orange);"></i> Live Job Board</h2>
+                    <span class="live-indicator hidden" id="liveIndicator">LIVE</span>
+                </div>
+                
+                <div id="requestsContainer" class="requests-list">
+                    <!-- Initial State -->
+                    <div class="empty-state-box">
+                        <div class="empty-icon"><i class="fas fa-power-off"></i></div>
+                        <h3>You are currently Offline</h3>
+                        <p>Go online to start receiving cooking requests nearby.</p>
+                        <button class="btn-primary" style="margin-top:15px; width:auto; padding:10px 20px;" onclick="toggleOnline()">Go Online Now</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- MODAL FOR ADDING DISH (This was missing in your code) -->
+    <div id="menuModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add New Dish</h3>
+                <i class="fas fa-times" style="cursor:pointer;" onclick="closeMenuModal()"></i>
+            </div>
+            <div class="form-group">
+                <label>Dish Name</label>
+                <input type="text" id="newDishName" class="form-input" placeholder="e.g. Biryani">
+            </div>
+            <div class="form-group">
+                <label>Price (₹)</label>
+                <input type="number" id="newDishPrice" class="form-input" placeholder="e.g. 250">
+            </div>
+            <button class="btn-primary" onclick="addDish()">Add to Menu</button>
+        </div>
+    </div>
+
+    <script>
+        // --- DATA STATE ---
+        // Mock data since we don't have a backend
+        let myMenu = [
+            { name: "Butter Chicken", price: 500 },
+            { name: "Mutton Rogan Josh", price: 750 },
+            { name: "Paneer Tikka", price: 400 }
+        ];
+
+        let incomingRequests = [];
+        let isOnline = false;
+
+        // --- DOM ELEMENTS ---
+        const requestsContainer = document.getElementById('requestsContainer');
+        const statusPill = document.getElementById('statusPill');
+        const statusText = document.getElementById('statusText');
+        const sidebarMenuList = document.getElementById('sidebarMenuList');
+        const menuModal = document.getElementById('menuModal');
+        const liveIndicator = document.getElementById('liveIndicator');
+
+        // --- INIT ---
+        window.onload = function() {
+            renderSidebarMenu();
+        };
+
+        // --- MENU LOGIC ---
+        function renderSidebarMenu() {
+            sidebarMenuList.innerHTML = myMenu.map(item => `
+                <li>
+                    <span>${item.name}</span>
+                    <span class="price-badge">₹${item.price}</span>
+                </li>
+            `).join('');
+        }
+
+        function openMenuModal() {
+            menuModal.classList.remove('hidden');
+        }
+
+        function closeMenuModal() {
+            menuModal.classList.add('hidden');
+        }
+
+        function addDish() {
+            const nameInput = document.getElementById('newDishName');
+            const priceInput = document.getElementById('newDishPrice');
+            
+            if(nameInput.value && priceInput.value) {
+                myMenu.push({
+                    name: nameInput.value,
+                    price: parseInt(priceInput.value)
+                });
+                renderSidebarMenu();
+                // Reset and close
+                nameInput.value = '';
+                priceInput.value = '';
+                closeMenuModal();
+            } else {
+                alert("Please fill in both fields");
+            }
+        }
+
+        // --- BOOKING LOGIC ---
+        function toggleOnline() {
+            isOnline = !isOnline;
+            
+            if (isOnline) {
+                // UI Updates
+                statusPill.classList.remove('offline');
+                statusPill.classList.add('online');
+                statusText.innerText = "You are Online";
+                liveIndicator.classList.remove('hidden');
+                
+                // MOCK: Generate requests if empty
+                if(incomingRequests.length === 0) {
+                    incomingRequests = [
+                        { id: 101, customer: "Ankit Sharma", location: "Block A, Skyline Apts", items: "2x Butter Chicken, 4x Naan", total: 1200 },
+                        { id: 102, customer: "Priya Singh", location: "House 42, Green Park", items: "1x Family Biryani Combo", total: 850 }
+                    ];
+                }
+                renderRequests();
+            } else {
+                // Go Offline
+                statusPill.classList.remove('online');
+                statusPill.classList.add('offline');
+                statusText.innerText = "Go Online";
+                liveIndicator.classList.add('hidden');
+                
+                requestsContainer.innerHTML = `
+                    <div class="empty-state-box">
+                        <div class="empty-icon"><i class="fas fa-power-off"></i></div>
+                        <h3>You are currently Offline</h3>
+                        <p>Go online to start receiving cooking requests nearby.</p>
+                        <button class="btn-primary" style="margin-top:15px; width:auto; padding:10px 20px;" onclick="toggleOnline()">Go Online Now</button>
+                    </div>`;
+            }
+        }
+
+        function renderRequests() {
+            if (incomingRequests.length === 0) {
+                requestsContainer.innerHTML = '<div class="empty-state-box"><p>Searching for nearby orders...</p></div>';
+                return;
+            }
+
+            requestsContainer.innerHTML = incomingRequests.map(req => `
+                <div class="request-card" id="req-${req.id}">
+                    <div class="req-header">
+                        <div class="customer-info">
+                            <h4>${req.customer}</h4>
+                            <div class="req-meta"><i class="fas fa-map-marker-alt"></i> ${req.location}</div>
+                        </div>
+                        <div style="background:#334155; padding:5px 10px; border-radius:6px; height:fit-content; font-size:0.8rem;">NEW</div>
+                    </div>
+                    
+                    <div class="req-items">
+                        ${req.items}
+                    </div>
+                    <div class="req-total">₹${req.total}</div>
+
+                    <div class="req-actions">
+                        <button class="btn-accept" onclick="acceptRequest(${req.id})">Accept Order</button>
+                        <button class="btn-reject" onclick="rejectRequest(${req.id})">Reject</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function acceptRequest(id) {
+            // Remove from list
+            const element = document.getElementById(`req-${id}`);
+            element.style.opacity = '0.5';
+            element.innerHTML = `<div style="text-align:center; padding:20px; color:#22c55e; font-weight:bold;"><i class="fas fa-check-circle"></i> Order Accepted!</div>`;
+            
+            // Remove from data after delay
+            setTimeout(() => {
+                incomingRequests = incomingRequests.filter(r => r.id !== id);
+                renderRequests();
+            }, 1500);
+        }
+
+        function rejectRequest(id) {
+             const element = document.getElementById(`req-${id}`);
+             element.innerHTML = `<div style="text-align:center; padding:20px; color:#ef4444;"><i class="fas fa-times-circle"></i> Rejected</div>`;
+             
+             setTimeout(() => {
+                incomingRequests = incomingRequests.filter(r => r.id !== id);
+                renderRequests();
+             }, 1000);
+        }
+    </script>
+</body>
+</html>

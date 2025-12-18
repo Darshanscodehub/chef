@@ -1,0 +1,100 @@
+/* --- VARIABLES (THEME) --- */
+:root {
+    /* Core Colors */
+    --bg-dark:#0e0e0e;      /* Almost Black */
+    --bg-card: #121212;      /* Dark Grey */
+    --text-main: #ffffff;
+    --text-muted: #a1a1aa;
+    
+    /* The "Fire" Gradient Palette */
+    --brand-orange: #FF512F;
+    --brand-gold: #F09819;
+    --gradient-main: linear-gradient(135deg, #FF512F 0%, #F09819 100%);
+    
+    /* Layout */
+    --container-width: 1200px;
+    --radius: 16px;
+    --font-heading: 'Outfit', sans-serif;
+    --font-body: 'Inter', sans-serif;
+}
+
+/* --- RESET --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    font-family: var(--font-body);
+    line-height: 1.6;
+    overflow-x: hidden; /* Prevent scrollbar from animations */
+}
+
+/* --- UTILITIES --- */
+.container {
+    max-width: var(--container-width);
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+.gradient-text {
+    background: var(--gradient-main);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 1000;
+}
+
+/* --- BUTTONS --- */
+.btn-glow {
+    padding: 10px 24px;
+    background: var(--gradient-main);
+    border: none;
+    border-radius: 50px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.btn-glow:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 20px rgba(255, 81, 47, 0.4); /* Orange Glow */
+}
+
+.btn-primary {
+    padding: 14px 32px;
+    background: var(--text-main);
+    color: var(--bg-dark);
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-primary:hover {
+    background: var(--brand-gold);
+    transform: scale(1.05);
+}
+
+.btn-secondary {
+    padding: 14px 32px;
+    background: transparent;
+    color: var(--text-main);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-left: 10px;
+    transition: 0.3s;
+}
+
+.btn-secondary:hover {
+    border-color: var(--text-main);
+    background: rgba(255,255,255,0.05);
+}
